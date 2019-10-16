@@ -57,7 +57,8 @@ class Hdf5(AutotoolsPackage):
     variant('szip', default=False, description='Enable szip support')
     variant('pic', default=True,
             description='Produce position-independent code (for shared libs)')
-
+    variant('fortran-io', default=False, description='Enable fortran libs')
+    variant('vfd', default=False, description='Enables direct vfd')
     depends_on('autoconf', type='build', when='@develop')
     depends_on('automake', type='build', when='@develop')
     depends_on('libtool',  type='build', when='@develop')
@@ -236,6 +237,11 @@ class Hdf5(AutotoolsPackage):
             extra_args.append('--disable-shared')
             extra_args.append('--enable-static-exec')
 
+        if '+fortran-io' in self.spec:
+            extra_args.append('--enable-fortran')
+            extra_args.append('--enable-fortran2003')
+        if '+vfd' in self.spec:
+            extra_args.append('--enable-direct-vfd')
         if '+pic' in self.spec:
             extra_args += ['%s=%s' % (f, self.compiler.pic_flag)
                            for f in ['CFLAGS', 'CXXFLAGS', 'FCFLAGS']]
