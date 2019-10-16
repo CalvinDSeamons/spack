@@ -37,6 +37,7 @@ class ParallelNetcdf(AutotoolsPackage):
     version('1.7.0',  sha256='52f0d106c470a843c6176318141f74a21e6ece3f70ee8fe261c6b93e35f70a94')
     version('1.6.1',  sha256='8cf1af7b640475e3cc931e5fbcfe52484c5055f2fab526691933c02eda388aae')
 
+    variant('shared', default=False, description='Builds shared libraries')
     variant('cxx', default=True, description='Build the C++ Interface')
     variant('fortran', default=True, description='Build the Fortran Interface')
     variant('pic', default=True,
@@ -67,6 +68,8 @@ class ParallelNetcdf(AutotoolsPackage):
 
         if '~cxx' in spec:
             args.append('--disable-cxx')
+        if '+shared' in spec:
+            args.append('--enable-shared')
 
         if '~fortran' in spec:
             args.append('--disable-fortran')
