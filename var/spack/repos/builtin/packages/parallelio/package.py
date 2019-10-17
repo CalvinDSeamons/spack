@@ -28,13 +28,13 @@ class Parallelio(AutotoolsPackage):
     #currently building everything needed for this horrid thing to work.
 
     depends_on('zlib@1.2.11')
-    depends_on('openmpi@3.1.2')
+    depends_on('openmpi@3.1.2%gcc@9.2.0', type='run')
     depends_on('python@2.7')
-    depends_on('hdf5@1.10.5~cxx+fortran-io+shared+mpi+hl+vfd+fortran')
-    depends_on('parallel-netcdf+shared~cxx')
-    depends_on('netcdf@4.7.0+parallel-netcdf+mpi+shared')
-    depends_on('netcdf-fortran')
-
+    depends_on('hdf5@1.10.5~cxx+fortran-io+shared+mpi+hl+vfd+fortran',type='run')
+    depends_on('parallel-netcdf+shared~cxx',type='run')
+    depends_on('netcdf@4.7.0+parallel-netcdf+mpi+shared')#,type='run')
+    depends_on('netcdf-fortran')#,type='run')
+    depends_on('metis')
     def configure_args(self):
         spec = self.spec
         args = []
@@ -54,12 +54,13 @@ class Parallelio(AutotoolsPackage):
         #netcdf = ('%s' % self.spec['netcdf'].prefix)
         #ldflags.append(netcdf+'/lib -lnetcdf')
         args.append('CC=%s' % self.spec['openmpi'].prefix +'/bin/mpicc')
-        args.append('FC=mpif90')
+        args.append('FC=%s' % self.spec['openmpi'].prefix+ '/bin/mpif90')
+        #args.append('FC=mpif90')
         args.append('CFLAG=-std=c99')
 
         args.append('--enable-fortran')
         args.append('--enable-shared')
-
+        args.append('--enable-disgusting')
         #args.append('CPPFLAGS=' + ' '.join(cppflags))
         #args.append('LDFLAGS=' + ' '.join(ldflags))
         return args
