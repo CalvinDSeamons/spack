@@ -22,19 +22,15 @@ class Parallelio(AutotoolsPackage):
     version('2.4.2', sha256='55e7c0d8911139599e2f31b1aa79bf5e0f2818d2519ae40671db5711977afcc6')
     version('2.4.1', sha256='f3ca3f56aa18efa1c4d7cdc6ce1c7b11d3f6382d31ec96874897814dffe6a78a')
 
-    #variant('fortran', default=False, description='Builds with netcdf-fortran')
-    #variant('shared',  default=False, description='Enable shared')
-
-    #currently building everything needed for this horrid thing to work.
-
     depends_on('zlib@1.2.11')
-    depends_on('openmpi@3.1.2%gcc@9.2.0', type='run')
-    depends_on('python@2.7')
-    depends_on('hdf5@1.10.5~cxx+fortran-io+shared+mpi+hl+vfd+fortran',type='run')
-    depends_on('parallel-netcdf+shared~cxx',type='run')
-    depends_on('netcdf@4.7.0+parallel-netcdf+mpi+shared')#,type='run')
-    depends_on('netcdf-fortran')#,type='run')
-    depends_on('metis')
+    depends_on('openmpi@3.1.2%gcc@9.2.0',                              type=('build', 'run'))
+    depends_on('python@2.7',                                           type=('build', 'run'))
+    depends_on('hdf5@1.10.5~cxx+fortran-io+shared+mpi+hl+vfd+fortran', type=('build', 'run'))
+    depends_on('parallel-netcdf+shared~cxx',                           type=('build', 'run'))
+    depends_on('netcdf@4.7.0+parallel-netcdf+mpi+shared',              type=('build', 'run'))
+    depends_on('netcdf-fortran',                                       type=('build', 'run'))
+    #depends_on('metis')
+
     def configure_args(self):
         spec = self.spec
         args = []
@@ -44,7 +40,6 @@ class Parallelio(AutotoolsPackage):
         hdf5_hl = self.spec['hdf5:hl']
         pnetcdf = self.spec['parallel-netcdf']
 
-        #cflags.append(self.compiler.pic_flag)
         cppflags.append(hdf5_hl.headers.cpp_flags)
         cppflags.append(pnetcdf.headers.cpp_flags)
         #ldflags.append(curl_libs.search_flags)
@@ -55,12 +50,10 @@ class Parallelio(AutotoolsPackage):
         #ldflags.append(netcdf+'/lib -lnetcdf')
         args.append('CC=%s' % self.spec['openmpi'].prefix +'/bin/mpicc')
         args.append('FC=%s' % self.spec['openmpi'].prefix+ '/bin/mpif90')
-        #args.append('FC=mpif90')
         args.append('CFLAG=-std=c99')
 
         args.append('--enable-fortran')
         args.append('--enable-shared')
-        args.append('--enable-disgusting')
         #args.append('CPPFLAGS=' + ' '.join(cppflags))
         #args.append('LDFLAGS=' + ' '.join(ldflags))
         return args
