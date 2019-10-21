@@ -29,7 +29,7 @@ class Parallelio(AutotoolsPackage):
     depends_on('hdf5@1.10.5~cxx+fortran-io+shared+mpi+hl+vfd+fortran', type=('build', 'run'))
     depends_on('parallel-netcdf+shared~cxx',                           type=('build', 'run'))
     depends_on('netcdf@4.7.0+parallel-netcdf+mpi+shared',              type=('build', 'run'))
-    depends_on('netcdf-fortran+pic',                                   type=('build', 'run'))
+    depends_on('netcdf-fortran+pic+cflags+fflags',                                   type=('build', 'run'))
     #depends_on('metis')
 
     def configure_args(self):
