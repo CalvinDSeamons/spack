@@ -9,7 +9,6 @@ import os
 
 from spack import *
 
-
 class Parallelio(AutotoolsPackage):
     """Abandon all hope ye who runs this spack package."""
 
@@ -29,38 +28,58 @@ class Parallelio(AutotoolsPackage):
     depends_on('hdf5@1.10.5~cxx+fortran-io+shared+mpi+hl+vfd+fortran', type=('build', 'run'))
     depends_on('parallel-netcdf+shared~cxx',                           type=('build', 'run'))
     depends_on('netcdf@4.7.0+parallel-netcdf+mpi+shared',              type=('build', 'run'))
-    depends_on('netcdf-fortran+pic',                                   type=('build', 'run'))
+    depends_on('netcdf-fortran+pic',                                   type=('build'))
     #depends_on('metis')
+
+
+    @property
+    def libs(self,func):
+        shared = True if '+shared' in self.spec else False
+
+        sdgfk=sdfgjnkdfgkjndfgjkdgf
+        #query_parameters = self.spec.last_query.extra_parameters
+        #libraries = ('libpnetcdf.a','libpnetcdf.la','libpnetcdf.so','libpnetcdf.so.3','libpnetcdf.so.3.0.2')
+        return find_libraries('libpnetcdf', root=self.prefix, shared=shared, recursive=True)
+
 
     def configure_args(self):
         spec = self.spec
         args = []
         cppflags = []
         ldflags = []
+        #cppflags.append(pnetcdf.headers.cpp_flags)
+        #cppflags.append(netcdff.headers.cpp_flags)
+        #cppflags.append(netcdf.headers.cpp_flags)
 
-        #hdf5_hl = self.spec['hdf5:hl']
-        #pnetcdf = self.spec['parallel-netcdf']
+
+
+        pnetcdf_libs = self.spec['parallel-netcdf'].libs.ld_flags
+        #ldflags.append(self.spec['parallel-netcdf'].pnetcdf_libs())
+
+
+        #ldflags.append(pnetcdf.headers.ld_flags)
+        #ldflags.append(netcdf.headers.ld_flags)
+
+
 
         #cppflags.append(hdf5_hl.headers.cpp_flags)
-        #cppflags.append(pnetcdf.headers.cpp_flags)
         #ldflags.append(curl_libs.search_flags)
         #ldflags.append(hdf5_hl.libs.search_flags)
         #ldflags.insert(0,'-L')
-        #cppflags.insert(0,'-I')
         #netcdf = ('%s' % self.spec['netcdf'].prefix)
         #ldflags.append(netcdf+'/lib -lnetcdf')
         args.append('CC=%s' % self.spec['openmpi'].prefix + '/bin/mpicc')
         args.append('FC=%s' % self.spec['openmpi'].prefix + '/bin/mpif90')
         args.append('CFLAG=-std=c99')
-        args.append('CPPFLAGS=-I%s' % self.spec['netcdf-fortran'].prefix + '/include ' +
-                             '-I%s' % self.spec['netcdf'].prefix + '/include ' +
-                             '-I%s' % self.spec['parallel-netcdf'].prefix + '/include')
+        #args.append('CPPFLAGS=-I%s' % self.spec['netcdf-fortran'].prefix + '/include ' +
+        #                     '-I%s' % self.spec['netcdf'].prefix + '/include ' +
+        #                     '-I%s' % self.spec['parallel-netcdf'].prefix + '/include')
 
-        args.append('LDFLAGS=-L%s' % self.spec['netcdf'].prefix + '/lib -lnetcdf ' + 
-                            '-L%s' % self.spec['parallel-netcdf'].prefix + '/lib -lpnetcdf')
+        #args.append('LDFLAGS=-L%s' % self.spec['netcdf'].prefix + '/lib -lnetcdf ' + 
+        #                    '-L%s' % self.spec['parallel-netcdf'].prefix + '/lib -lpnetcdf')
         args.append('--enable-fortran')
         args.append('--enable-shared')
-        #args.append('CPPFLAGS=' + ' '.join(cppflags))
-        #args.append('LDFLAGS=' + ' '.join(ldflags))
+        args.append('CPPFLAGS=' + ' '.join(cppflags))
+        args.append('LDFLAGS=' + ' '.join(ldflags))
         return args
 

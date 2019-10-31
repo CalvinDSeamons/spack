@@ -139,7 +139,7 @@ class Hdf5(AutotoolsPackage):
         :return: list of matching libraries
         """
         query_parameters = self.spec.last_query.extra_parameters
-
+        goob=asdagfssdfg
         shared = '+shared' in self.spec
 
         # This map contains a translation from query_parameters
